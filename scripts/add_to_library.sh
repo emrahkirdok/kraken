@@ -26,6 +26,9 @@ LIBRARY_DIR="$KRAKEN_DB_NAME/library"
 
 input_file=$1
 
+filename=$(basename "$input_file")
+extension="${filename##*.}"
+
 if [ ! -e "$input_file" ]
 then
   echo "Can't add \"$input_file\": file does not exist"
@@ -48,7 +51,7 @@ fi
    
 scan_fasta_file.pl "$input_file" > "$add_dir/temp_map.txt"
 
-filename=$(cp_into_tempfile.pl -t "XXXXXXXXXX" -d "$add_dir" -s fna "$input_file")
+filename=$(cp_into_tempfile.pl -t "XXXXXXXXXX" -d "$add_dir" -s "$extension"  "$input_file")
 
 cat "$add_dir/temp_map.txt" >> "$add_dir/prelim_map.txt"
 rm "$add_dir/temp_map.txt"
