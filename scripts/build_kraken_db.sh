@@ -72,12 +72,12 @@ else
   # Estimate hash size as 1.25 * estimated k-mer count
   if [ -z "$KRAKEN_HASH_SIZE" ]
   then
-    KRAKEN_HASH_SIZE=$(find library/ -name '*.fna' -print0 | xargs -0 cat | kmer_estimator -m 1.25 -t $KRAKEN_THREAD_CT -k $KRAKEN_KMER_LEN)
+    KRAKEN_HASH_SIZE=$(find library/ -name '*.gz' -print0 | xargs -0 zcat | kmer_estimator -m 1.25 -t $KRAKEN_THREAD_CT -k $KRAKEN_KMER_LEN)
     echo "Hash size not specified, using '$KRAKEN_HASH_SIZE'"
   fi
 
-  find library/ -name '*.fna' -print0 | \
-    xargs -0 cat | \
+  find library/ -name '*.gz' -print0 | \
+    xargs -0 zcat | \
     jellyfish count -m $KRAKEN_KMER_LEN -s $KRAKEN_HASH_SIZE -C -t $KRAKEN_THREAD_CT \
       -o database /dev/fd/0
 
@@ -194,7 +194,7 @@ then
 else
   echo "Setting LCAs in database (step 6 of 6)..."
   start_time1=$(date "+%s.%N")
-  find library/ '(' -name '*.fna' -o -name '*.fa' -o -name '*.ffn' ')' -print0 | \
+  find library/ '(' -name '*.fna' -o -name '*.fa' -o -name '*.gz' ')' -print0 | \
     xargs -0 cat | \
     set_lcas $MEMFLAG -x -d database.kdb -i database.idx \
     -n taxonomy/nodes.dmp -t $KRAKEN_THREAD_CT -m seqid2taxid.map -F /dev/fd/0
