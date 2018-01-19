@@ -1,5 +1,6 @@
 CXX = g++
 CXXFLAGS = -Wall -fopenmp -O3
+LDLIBS = -lz
 PROGS = db_sort set_lcas classify make_seqid_to_taxid_map db_shrink kmer_estimator
 
 .PHONY: all install clean
@@ -16,11 +17,11 @@ db_shrink: krakendb.o quickfile.o
 
 db_sort: krakendb.o quickfile.o
 
-set_lcas: krakendb.o quickfile.o krakenutil.o seqreader.o
+set_lcas: krakendb.o quickfile.o krakenutil.o seqreader.o gzstream.o
 
-kmer_estimator: krakenutil.o seqreader.o
+kmer_estimator: krakenutil.o seqreader.o gzstream.o
 
-classify: krakendb.o quickfile.o krakenutil.o seqreader.o
+classify: krakendb.o quickfile.o krakenutil.o seqreader.o gzstream.o
 
 make_seqid_to_taxid_map: quickfile.o
 
@@ -30,7 +31,7 @@ krakenutil.o: krakenutil.cpp krakenutil.hpp
 krakendb.o: krakendb.cpp krakendb.hpp quickfile.hpp
 	$(CXX) $(CXXFLAGS) -c krakendb.cpp
 
-seqreader.o: seqreader.cpp seqreader.hpp quickfile.hpp
+seqreader.o: seqreader.cpp seqreader.hpp quickfile.hpp 
 	$(CXX) $(CXXFLAGS) -c seqreader.cpp
 
 quickfile.o: quickfile.cpp quickfile.hpp
